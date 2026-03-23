@@ -1,0 +1,11 @@
+# Ignore the environment
+venv/
+
+# Ignore the heavy data (Kaggle)
+data/
+outputs/
+
+# Ignore Python "trash" files
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
