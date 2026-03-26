@@ -36,3 +36,10 @@ runs/
 # Ignore Colab-specific files
 .config/
 
+# Python Virtual Environments
+venv311/
+venv/
+
+# Large Data Artifacts
+data/processed/*.csv
+data/processed/*.zip
