@@ -42,4 +42,19 @@ venv/
 
 # Large Data Artifacts
 data/processed/*.csv
-data/processed/*.zip
+data/processed/*.zip 
+
+# Machine Learning Weights
+*.pth
+*.pt
+
+# Generated Error Galleries (Too heavy for Git)
+outputs/error_gallery/
+outputs/fp_gallery/
+outputs/clean_predictions/
+
+# Virtual Environments & Cache
+venv311/
+venv/
+__pycache__/
+.ipynb_checkpoints/
