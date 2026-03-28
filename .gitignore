@@ -57,4 +57,9 @@ outputs/clean_predictions/
 venv311/
 venv/
 __pycache__/
-.ipynb_checkpoints/
+.ipynb_checkpoints/ 
+
+
+# Cloud Transfer Payloads
+*.tar.gz
+*.zip 
