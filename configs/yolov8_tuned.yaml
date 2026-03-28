@@ -26,3 +26,9 @@ lrf: 0.01          # Final learning rate: at the deeper epochs it will be 0.01 *
 momentum: 0.937    # Optimizer momentum
 weight_decay: 0.0005 # Weight decay
 warmup_epochs: 3.0 # Warmup epochs  
+
+# 5. Colab Free-Tier Infrastructure Limits (The Crash Protections)
+batch: -1          # AutoBatch to prevent CUDA OOM on 16GB GPU
+workers: 2         # Limit data loader to match Colab's 2-core CPU
+cache: False       # Prevent system RAM overload (Colab limit ~12GB)
+amp: True          # Force 16-bit precision to save VRAM 
