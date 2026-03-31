@@ -91,4 +91,14 @@ data/labels/
 
 # OS generated files
 .DS_Store
-Thumbs.db 
+Thumbs.db  
+
+# Ignore local test images
+data/test_samples/*.jpg
+data/test_samples/*.png
+data/test_samples/*.webp
+
+# Ignore Python cache and local environments
+__pycache__/
+*.pyc
+venv311/  
