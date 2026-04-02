@@ -51,7 +51,7 @@ The extracted metadata definitively proves our Block 2 hypotheses.
 *(Histograms and heatmaps proving the distribution of errors will be linked here).* 
 
 **Visual Evidence:**
-![Error Analysis Dashboard](../outputs/error_analysis_dashboard.png)
+![Error Analysis Dashboard](../assets/error_analysis_dashboard.png)
 
 **Conclusion & Diagnosis:**
 A comprehensive univariate and bivariate analysis of the False Negative metadata reveals four distinct structural vulnerabilities in the baseline YOLOv8s model:
@@ -103,7 +103,7 @@ A comprehensive univariate and bivariate analysis of the False Negative metadata
 **Objective:** Execute a bivariate topological comparison of Detection Failures (False Negatives) against Hallucination/Localization Failures (False Positives) to identify systemic architectural vulnerabilities.
 
 **Visual Evidence:**
-![FN vs FP Error Synthesis](../outputs/pro_error_synthesis.png)
+![FN vs FP Error Synthesis](../assets/pro_error_synthesis.png)
 
 **Lead Engineering Diagnosis: The Symmetry of Failure**
 A comparative analysis of the error distributions reveals a profound architectural insight: the baseline model's failure states are highly symmetrical. The network is not failing in multiple disparate ways; rather, both False Negatives and False Positives share the exact same root cause.
@@ -120,4 +120,4 @@ The root cause is definitively established: object degradation through the deepe
 
 * **Targeted Augmentation:** Deploy aggressive contrast/brightness jitter and mosaic augmentation to force the model to learn texture separation in camouflaged, complex environments.
 
-* **Negative Mining:** Inject background-only images into the training set to heavily penalize the network's hallucination loop.
+* **Negative Mining:** Inject background-only images into the training set to heavily penalize the network's hallucination loop. 
