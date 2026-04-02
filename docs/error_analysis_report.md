@@ -103,7 +103,7 @@ A comprehensive univariate and bivariate analysis of the False Negative metadata
 **Objective:** Execute a bivariate topological comparison of Detection Failures (False Negatives) against Hallucination/Localization Failures (False Positives) to identify systemic architectural vulnerabilities.
 
 **Visual Evidence:**
-![FN vs FP Error Synthesis](assets/pro_error_synthesis copy.png)
+![FN vs FP Error Synthesis](assets/pro_error_synthesis%20copy.png)
 
 **Lead Engineering Diagnosis: The Symmetry of Failure**
 A comparative analysis of the error distributions reveals a profound architectural insight: the baseline model's failure states are highly symmetrical. The network is not failing in multiple disparate ways; rather, both False Negatives and False Positives share the exact same root cause.
