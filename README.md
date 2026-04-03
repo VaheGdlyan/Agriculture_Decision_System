@@ -64,10 +64,16 @@ cd Agriculture_Decision_System
 ### 2. Environment Setup
 Isolate the deployment environment by initializing a custom Python virtual environment named `venv311`. 
 
-**For Windows Systems:**
-```bash
+**For Windows (PowerShell):**
+```powershell
 python -m venv venv311
-source venv311/Scripts/activate
+.\venv311\Scripts\Activate.ps1
+```
+
+**For Windows (CMD):**
+```cmd
+python -m venv venv311
+venv311\Scripts\activate.bat
 ```
 
 **For Linux / macOS Systems:**
