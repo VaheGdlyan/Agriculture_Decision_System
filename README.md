@@ -28,6 +28,11 @@
 </p>
 <p align="center"><em>Real-time wheat head detection with per-object confidence scoring — Tuned YOLOv8s at 1024px resolution</em></p>
 
+<p align="center">
+  <img src="AgriVision_Paper/sec/teaser_statistic.png" width="750" alt="AgriVision analytics dashboard — yield estimation, spatial uniformity, revenue projection, and PDF report export">
+</p>
+<p align="center"><em>Automated agronomic analytics: Yield estimation (t/ha), Spatial Uniformity (CV%), Revenue projection, and one-click PDF Executive Briefing export</em></p>
+
 ---
 
 ## Executive Summary
@@ -131,7 +136,7 @@ Upon the termination of an inference run, the data payloads are algorithmically 
 
 ## 📊 Model Performance & Validation
 
-The tuned YOLOv8s model was rigorously validated against a 548-image holdout partition from the [Global Wheat Head Detection](https://www.kaggle.com/c/global-wheat-detection) dataset. Complete methodology, mathematical proofs, and ablation results are documented in the [research paper](AgriVision_Paper/AgriVision_CVPR_Draft.pdf).
+The tuned YOLOv8s model was rigorously validated against a 548-image holdout partition from the [Global Wheat Head Detection](https://zenodo.org/records/4298502) dataset. Complete methodology, mathematical proofs, and ablation results are documented in the [research paper](AgriVision_Paper/AgriVision_CVPR_Draft.pdf).
 
 ### Head-to-Head: Baseline vs. Tuned Model
 
@@ -249,10 +254,13 @@ If you use this work in your research, please cite:
 
 ---
 
-## 👤 Author
+## 🧑‍💻 Author
 
 **Vahe Gdlyan**  
+
 [![GitHub](https://img.shields.io/badge/GitHub-VaheGdlyan-181717?style=flat-square&logo=github)](https://github.com/VaheGdlyan)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Vahe%20Gdlyan-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/vahe-gdlyan-1415873a7/)
+[![Medium](https://img.shields.io/badge/Medium-@gdlyanvahe31-000000?style=flat-square&logo=medium)](https://medium.com/@gdlyanvahe31)
 
 ---
 
