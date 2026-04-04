@@ -213,7 +213,7 @@ pip install -r requirements.txt
 ```
 
 ### 4. System Initialization
-Launch the application on `localhost`:
+Launch the application on  `localhost`:
 ```bash
 streamlit run app.py
 ```
