@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriVision — Exposing the Lie in Precision Agriculture AI</title>
+
+    <!-- Reveal.js CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+    <style>
+        /*  ========================================================
+            GLOBAL DARK TERMINAL THEME
+            ======================================================== */
+        :root {
+            --bg-deep:       #0a0a0a;
+            --bg-surface:    #111111;
+            --bg-card:       #1a1a1a;
+            --border-subtle:  #222222;
+            --text-primary:  #e8e8e8;
+            --text-secondary: #888888;
+            --text-dim:      #555555;
+            --accent-green:  #00ff88;
+            --accent-cyan:   #00e5ff;
+            --accent-red:    #ff3b3b;
+            --accent-amber:  #ffb800;
+            --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+            --font-sans:     'Inter', -apple-system, sans-serif;
+        }
+
+        .reveal {
+            font-family: var(--font-sans);
+            color: var(--text-primary);
+        }
+
+        .reveal .slides {
+            text-align: left;
+        }
+
+        .reveal .slides section {
+            padding: 30px 60px;
+            box-sizing: border-box;
+        }
+
+        /* ── Headings ── */
+        .reveal h1, .reveal h2, .reveal h3 {
+            font-family: var(--font-sans);
+            font-weight: 800;
+            text-transform: none;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .reveal h1 { font-size: 2em; color: var(--text-primary); }
+        .reveal h2 { font-size: 1.5em; color: var(--text-primary); }
+        .reveal h3 { font-size: 0.95em; color: var(--text-secondary); font-weight: 500; }
+
+        /* ── Accent text utilities ── */
+        .neon       { color: var(--accent-green); }
+        .cyan       { color: var(--accent-cyan); }
+        .red        { color: var(--accent-red); }
+        .amber      { color: var(--accent-amber); }
+        .dim        { color: var(--text-dim); }
+        .mono       { font-family: var(--font-mono); }
+        .small      { font-size: 0.65em; }
+        .medium     { font-size: 0.85em; }
+
+        /* ── Terminal prompt ── */
+        .terminal-prompt::before {
+            content: '▶ ';
+            color: var(--accent-green);
+            font-family: var(--font-mono);
+        }
+        .terminal-prompt {
+            font-family: var(--font-mono);
+            font-size: 0.7em;
+            color: var(--text-secondary);
+            margin-top: 15px;
+        }
+
+        /* ── Metric highlight boxes ── */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .metric-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .metric-box .value {
+            font-family: var(--font-mono);
+            font-size: 1.6em;
+            font-weight: 700;
+        }
+        .metric-box .label {
+            font-size: 0.7em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 8px;
+        }
+
+        /* ── Comparison table ── */
+        .reveal table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 0.65em;
+            margin-top: 12px;
+        }
+        .reveal table th {
+            background: var(--bg-card);
+            color: var(--accent-cyan);
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 2px solid var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+        .reveal table td {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+        }
+        .reveal table tr:hover td {
+            background: rgba(0, 255, 136, 0.03);
+        }
+
+        /* ── Center question slides ── */
+        .center-question {
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center !important;
+            min-height: 100%;
+        }
+        .center-question h2 {
+            font-size: 1.8em;
+            max-width: 80%;
+            line-height: 1.2;
+        }
+
+        /* ── Image styling ── */
+        .slide-image {
+            border-radius: 6px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            max-height: 320px;
+            width: auto;
+        }
+        .slide-image-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.12;
+            z-index: -1;
+        }
+
+        /* ── Speaker notes placeholder styling ── */
+        .reveal .speaker-notes-visible .speaker-notes {
+            font-family: var(--font-mono);
+            font-size: 0.8em;
+        }
+
+        /* ── Glow line separator ── */
+        .glow-line {
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan), transparent);
+            border: none;
+            margin: 12px 0;
+            opacity: 0.6;
+        }
+
+        /* ── Fragment reveal styling ── */
+        .reveal .fragment {
+            transition: all 0.4s ease;
+        }
+        .reveal .fragment.visible {
+            opacity: 1;
+        }
+        .fragment.reveal-answer {
+            padding: 14px;
+            margin-top: 14px;
+            border-left: 3px solid var(--accent-green);
+            background: rgba(0, 255, 136, 0.03);
+        }
+
+        /* ── Math block ── */
+        .math-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 3px solid var(--accent-cyan);
+            padding: 18px 24px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        /* ── Bullet styling ── */
+        .reveal ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .reveal ul li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 8px;
+            font-size: 0.7em;
+            color: var(--text-secondary);
+        }
+        .reveal ul li::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        /* ── Slide number styling ── */
+        .reveal .slide-number {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-dim);
+            background: transparent;
+        }
+
+        /* ── Progress bar ── */
+        .reveal .progress {
+            height: 3px;
+            color: var(--accent-green);
+        }
+
+        /* ── Title slide special ── */
+        .title-subtext {
+            font-family: var(--font-mono);
+            font-size: 0.55em;
+            color: var(--accent-cyan);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-top: 15px;
+        }
+
+        /* ── Author block ── */
+        .author-block {
+            margin-top: 10px;
+        }
+        .author-block .lead-author {
+            font-family: var(--font-sans);
+            font-size: 0.65em;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+        }
+        .author-block .co-authors {
+            font-family: var(--font-sans);
+            font-size: 0.55em;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            letter-spacing: 0.01em;
+        }
+        .author-block .affiliation {
+            font-family: var(--font-mono);
+            font-size: 0.45em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 10px;
+        }
+
+        /* ── Instruction step styling ── */
+        .instruction-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 14px;
+            padding: 14px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+        }
+        .instruction-step .step-num {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            font-weight: 700;
+            color: var(--accent-green);
+            flex-shrink: 0;
+            min-width: 24px;
+        }
+        .instruction-step .step-text {
+            font-size: 0.65em;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .instruction-step .step-text code {
+            font-family: var(--font-mono);
+            font-size: 0.95em;
+            color: var(--accent-cyan);
+            background: rgba(0, 229, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        /* ── Slide 11 roadmap ── */
+        .roadmap-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+        }
+        .roadmap-icon {
+            font-size: 1.4em;
+            flex-shrink: 0;
+        }
+        .roadmap-item .roadmap-label {
+            font-size: 0.65em;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .roadmap-item .roadmap-desc {
+            font-size: 0.5em;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 1 — TITLE & THE HOOK
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <div class="slide-image-bg" style="background-image: url('../data/test_samples/wheat_test_3.jpg');"></div>
+        <div style="margin-top: 60px;">
+            <h1 style="font-size: 2em; line-height: 1.05;">
+                AgriVision:<br>
+                <span class="neon">Error-Driven Optimization</span><br>
+                for Precision Agriculture
+            </h1>
+            <div class="glow-line"></div>
+            <div class="author-block">
+                <p class="lead-author">Vahe Gdlyan, &nbsp;Yexishe Makuchyan, &nbsp;Anahit Israelyan, &nbsp;Armen-Aris Shahinyan</p>
+                <p class="affiliation">Computer Vision &amp; Machine Learning Research &nbsp;·&nbsp; 2026</p>
+            </div>
+        </div>
+        <aside class="notes">
+            This presentation documents a systematic investigation into yield estimation error propagation in agricultural object detection systems, and our engineered solution.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 2 — DATASET OVERVIEW
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Dataset: Global Wheat Head Detection</h2>
+        <h3 class="dim">Multi-institutional benchmark for agricultural object detection</h3>
+        <div class="glow-line"></div>
+
+        <div style="display: flex; gap: 30px; align-items: flex-start;">
+            <div style="flex: 1;">
+                <div class="metric-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="metric-box">
+                        <div class="value neon">3,422</div>
+                        <div class="label">Total Images</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="value neon">147K+</div>
+                        <div class="label">Bounding Box Annotations</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="value cyan">1024×1024</div>
+                        <div class="label">Native Resolution</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="value cyan">11</div>
+                        <div class="label">Research Institutions</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
+                    <p style="font-size: 0.55em; font-weight: 600; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;">Source Domains</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); border-radius: 4px; color: var(--accent-green);">arvalis_1</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); border-radius: 4px; color: var(--accent-green);">arvalis_2</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); border-radius: 4px; color: var(--accent-green);">arvalis_3</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.2); border-radius: 4px; color: var(--accent-cyan);">ethz_1</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.2); border-radius: 4px; color: var(--accent-cyan);">rres_1</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.2); border-radius: 4px; color: var(--accent-cyan);">usask_1</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(255,184,0,0.08); border: 1px solid rgba(255,184,0,0.2); border-radius: 4px; color: var(--accent-amber);">inrae_1</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(255,184,0,0.08); border: 1px solid rgba(255,184,0,0.2); border-radius: 4px; color: var(--accent-amber);">nau_1</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(255,184,0,0.08); border: 1px solid rgba(255,184,0,0.2); border-radius: 4px; color: var(--accent-amber);">uq_1</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(255,59,59,0.08); border: 1px solid rgba(255,59,59,0.2); border-radius: 4px; color: var(--accent-red);">utokyo_1</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.45em; padding: 3px 8px; background: rgba(255,59,59,0.08); border: 1px solid rgba(255,59,59,0.2); border-radius: 4px; color: var(--accent-red);">utokyo_2</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="flex: 0.9;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px;">
+                    <p style="font-size: 0.55em; font-weight: 600; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">Dataset Characteristics</p>
+                    <ul>
+                        <li>Multi-regional phenotypic variance across <span class="neon">4 continents</span></li>
+                        <li>Annotations: <span class="mono cyan">[x, y, width, height]</span> bounding boxes per wheat head</li>
+                        <li>Density range: <span class="mono">1 – 89</span> heads per image</li>
+                        <li>Photometric variance: full-sun, overcast, shadow conditions</li>
+                        <li>Growth stages: mature golden-brown dominant, immature canopies sparse</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <aside class="notes">
+            The Global Wheat Head Detection dataset is a multi-institutional collaborative benchmark spanning 11 research institutions across 4 continents. It provides 3,422 images at 1024×1024 resolution with over 147,000 bounding box annotations for wheat head detection.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 3 — DATA PREPROCESSING PIPELINE
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Data Preprocessing Pipeline</h2>
+        <h3 class="dim">From raw annotations to training-ready YOLO format</h3>
+        <div class="glow-line"></div>
+
+        <div style="display: flex; gap: 25px; align-items: flex-start;">
+            <div style="flex: 1;">
+                <div style="font-family: var(--font-mono); font-size: 0.5em; color: var(--text-secondary); line-height: 1.9;">
+                    <p><span class="neon">01</span> &nbsp;Raw CSV ingestion — <span class="mono cyan">master_metadata.csv</span> (3.37 MB)</p>
+                    <p><span class="neon">02</span> &nbsp;Parse bounding boxes from nested JSON arrays</p>
+                    <p><span class="neon">03</span> &nbsp;Convert <span class="mono amber">[x, y, w, h]</span> → YOLO normalized <span class="mono cyan">[cx, cy, w, h]</span></p>
+                    <p><span class="neon">04</span> &nbsp;Stratified train/test split — <span class="mono">80/20</span> ratio</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Train: <span class="neon">2,738 images</span> (train.csv — 2.69 MB)</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Test: <span class="cyan">684 images</span> (test.csv — 673 KB)</p>
+                    <p><span class="neon">05</span> &nbsp;Export to YOLO directory structure</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="mono">images/train/</span> + <span class="mono">labels/train/</span></p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="mono">images/val/</span> + <span class="mono">labels/val/</span></p>
+                    <p><span class="neon">06</span> &nbsp;Final dataset archive: <span class="mono amber">3.92 GB</span> (yolo_dataset.zip)</p>
+                </div>
+            </div>
+
+            <div style="flex: 0.85;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; margin-bottom: 12px;">
+                    <p style="font-size: 0.55em; font-weight: 600; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;">Augmentation Strategy</p>
+                    <ul>
+                        <li><span class="mono neon">Mosaic</span> — 100% probability (4-image tile composition)</li>
+                        <li><span class="mono cyan">HSV-V jitter</span> — 0.4 → <span class="neon">0.6</span> (photometric hardening)</li>
+                        <li><span class="mono cyan">FlipUD</span> — 0.0 → <span class="neon">0.5</span> (nadir rotational invariance)</li>
+                        <li><span class="mono amber">Mixup</span> — 0.0 → <span class="neon">0.2</span> (canopy overlap simulation)</li>
+                    </ul>
+                </div>
+                <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px;">
+                    <p style="font-size: 0.55em; font-weight: 600; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;">Coordinate Transform</p>
+                    <div class="math-block" style="margin: 8px 0; padding: 10px 14px; font-size: 0.9em;">
+                        cx = (x + w/2) / W<br>
+                        cy = (y + h/2) / H
+                    </div>
+                    <p style="font-size: 0.45em; color: var(--text-dim); margin-top: 6px;">Absolute pixel → normalized center coordinates [0, 1]</p>
+                </div>
+            </div>
+        </div>
+
+        <aside class="notes">
+            The preprocessing pipeline converts raw CSV annotations with nested JSON bounding boxes into the YOLO format expected by the Ultralytics training framework. The stratified split ensures balanced phenotypic representation across train and validation partitions.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 4 — SAMPLE DIVERSITY & DOMAIN VARIANCE
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Sample Diversity &amp; Domain Variance</h2>
+        <h3 class="dim">Cross-institutional photometric and phenotypic variation</h3>
+        <div class="glow-line"></div>
+
+        <div style="display: flex; gap: 15px; align-items: flex-start;">
+            <div style="flex: 1;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                        <img src="wheat_test_1.jpg" class="slide-image" style="max-height: 160px; width: 100%; object-fit: cover;">
+                        <p style="font-size: 0.4em; color: var(--text-dim); text-align: center; margin-top: 4px;">Dense mature canopy — golden phenotype</p>
+                    </div>
+                    <div>
+                        <img src="wheat_test_2.jpg" class="slide-image" style="max-height: 160px; width: 100%; object-fit: cover;">
+                        <p style="font-size: 0.4em; color: var(--text-dim); text-align: center; margin-top: 4px;">Sparse distribution — high contrast</p>
+                    </div>
+                    <div>
+                        <img src="wheat_test_5.jpg" class="slide-image" style="max-height: 160px; width: 100%; object-fit: cover;">
+                        <p style="font-size: 0.4em; color: var(--text-dim); text-align: center; margin-top: 4px;">Overexposure — photometric stress</p>
+                    </div>
+                    <div>
+                        <img src="wheat_test_4.jpg" class="slide-image" style="max-height: 160px; width: 100%; object-fit: cover;">
+                        <p style="font-size: 0.4em; color: var(--text-dim); text-align: center; margin-top: 4px;">Shadow region — luminance challenge</p>
+                    </div>
+                </div>
+            </div>
+            <div style="flex: 0.75;">
+                <img src="hardest_case_ood.png" class="slide-image" style="max-height: 220px; width: 100%;">
+                <p style="font-size: 0.45em; color: var(--accent-red); text-align: center; margin-top: 6px; font-weight: 600;">OOD Stress Case — Immature Green Canopy</p>
+                <p style="font-size: 0.4em; color: var(--text-dim); text-align: center; margin-top: 2px;">56 combined errors · avg. confidence 0.44</p>
+                <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; margin-top: 10px;">
+                    <p style="font-size: 0.45em; color: var(--text-secondary); line-height: 1.5;">
+                        The dataset's phenotypic bias toward mature golden-brown wheat creates a <span class="red">domain boundary</span> for immature green canopies — establishing the model's <span class="amber">irreducible error floor</span>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <aside class="notes">
+            The Global Wheat Head Dataset spans diverse photometric conditions but is biased toward mature golden-brown wheat. The OOD stress case demonstrates the irreducible domain boundary where the model cannot distinguish green wheat heads from green leaves, motivating future corpus augmentation across the complete BBCH growth scale.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 5 — THE ILLUSION OF SUCCESS (BASELINE)
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Baseline Model Performance</h2>
+        <h3 class="dim">Initial deployment metrics — YOLOv8s at 640px resolution</h3>
+        <div class="glow-line"></div>
+
+        <div style="display: flex; gap: 40px; align-items: flex-start;">
+            <div style="flex: 1;">
+                <div class="metric-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="metric-box">
+                        <div class="value neon">0.950</div>
+                        <div class="label">mAP@50</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="value neon">0.974</div>
+                        <div class="label">Recall</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="value" style="color: var(--text-primary);">0.877</div>
+                        <div class="label">Precision</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="value" style="color: var(--text-primary);">0.569</div>
+                        <div class="label">mAP@50-95</div>
+                    </div>
+                </div>
+                <p class="terminal-prompt" style="margin-top: 20px;">YOLOv8s &nbsp;· &nbsp;640px &nbsp;· &nbsp;50 epochs &nbsp;· &nbsp;Global Wheat Dataset</p>
+            </div>
+            <div style="flex: 0.8;">
+                <img src="results.png" class="slide-image" style="max-height: 240px;">
+            </div>
+        </div>
+
+        <aside class="notes">
+            The baseline model reports strong detection metrics at surface level. However, these aggregate numbers conceal a critical downstream failure when translated into yield estimation.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 3 — THE INTERROGATION (SOCRATIC QUESTION)
+         ══════════════════════════════════════════════════════════ -->
+    <section class="center-question">
+        <h2>If the model achieves <span class="neon">0.950 mAP</span>...</h2>
+        <div class="fragment reveal-answer">
+            <h2 style="font-size: 1.6em;">...why does the yield estimation pipeline <span class="red">overpredict by 4–8%</span>?</h2>
+        </div>
+        <aside class="notes">
+            When bounding box counts are translated into panicle density — our proxy for yield — we observed systematic inflation. The detection-to-estimation pipeline was propagating accumulated false positives.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 4 — THE AUTOPSY (HALLUCINATIONS)
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Error Forensics</h2>
+        <h3 class="dim">Systematic decomposition of baseline failure modes</h3>
+        <div class="glow-line"></div>
+
+        <div style="display: flex; gap: 30px; align-items: center;">
+            <div style="flex: 1;">
+                <img src="error_analysis_dashboard.png" class="slide-image" style="max-height: 280px; width: 100%;">
+            </div>
+            <div style="flex: 0.6;">
+                <div class="fragment reveal-answer" style="text-align: center;">
+                    <p class="mono" style="font-size: 2.4em; font-weight: 700; color: var(--accent-red); margin: 0;">1,092</p>
+                    <p class="mono" style="font-size: 0.8em; color: var(--text-secondary); margin-top: 8px;">Zero-IoU False Positives</p>
+                    <div class="glow-line" style="background: linear-gradient(90deg, var(--accent-red), transparent);"></div>
+                    <p style="font-size: 0.65em; color: var(--text-dim); line-height: 1.5;">
+                        The baseline network generated spurious detections concentrated in low-luminance shadow regions and dense canopy overlap zones, where recall maximization incentivized speculative predictions.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <aside class="notes">
+            Post-hoc analysis revealed that the baseline model produced 1,092 detections with zero intersection-over-union against ground truth. These hallucinated bounding boxes were systematically concentrated in photometrically ambiguous regions.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 5 — THE DIAGNOSTIC QUESTION
+         ══════════════════════════════════════════════════════════ -->
+    <section class="center-question">
+        <h2 style="font-size: 1.9em;">How do you <span class="cyan">penalize</span> a network<br>for <span class="amber">speculative detections</span>?</h2>
+        <div class="fragment reveal-answer">
+            <p style="font-size: 1.3em; font-weight: 600;">The input distribution is fixed.<br><span class="neon">The loss gradient must be re-engineered.</span></p>
+        </div>
+        <aside class="notes">
+            The dataset was not the source of error. The loss function's recall-biased gradient was incentivizing the network to produce speculative detections rather than abstaining in ambiguous regions.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 6 — RE-ENGINEERING THE LOSS GRADIENT
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Proposed Loss Formulation</h2>
+        <h3 class="dim">Focal Boundary Loss with Adaptive Photometric Weighting</h3>
+        <div class="glow-line"></div>
+
+        <div class="math-block">
+            <span style="font-size: 1.3em;">
+                ℒ<sub>total</sub> = λ<sub>1</sub> · ℒ<sub>focal_boundary</sub> + λ<sub>2</sub> · ℒ<sub>photometric_weighting</sub>
+            </span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px;">
+                <p style="font-size: 0.75em; font-weight: 600; color: var(--accent-cyan); margin-bottom: 8px;">Focal Boundary Loss</p>
+                <p style="font-size: 0.6em; color: var(--text-secondary); line-height: 1.6;">
+                    Amplifies gradient magnitude for predictions at overlapping boundary regions,
+                    imposing an asymmetric penalty on bounding box proposals that intersect adjacent ground-truth instances.
+                </p>
+            </div>
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px;">
+                <p style="font-size: 0.75em; font-weight: 600; color: var(--accent-cyan); margin-bottom: 8px;">Adaptive Photometric Weighting</p>
+                <p style="font-size: 0.6em; color: var(--text-secondary); line-height: 1.6;">
+                    Dynamically scales loss contribution as a function of local luminance variance,
+                    enforcing elevated false-positive penalties in photometrically ambiguous regions.
+                </p>
+            </div>
+        </div>
+
+        <aside class="notes">
+            The standard loss was replaced with a composite objective that explicitly penalizes speculative detections at overlapping boundaries and in shadow-degraded regions, where the baseline model was most prone to hallucination.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 7 — THE ABLATION STUDY
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Ablation Study</h2>
+        <h3 class="dim">Systematic hyperparameter search and false-positive decay analysis</h3>
+        <div class="glow-line"></div>
+
+        <div style="display: flex; gap: 30px; align-items: center;">
+            <div style="flex: 1.2;">
+                <img src="spatial_size_error_analysis.png" class="slide-image" style="max-height: 280px; width: 100%;">
+            </div>
+            <div style="flex: 0.8;">
+                <ul>
+                    <li>λ<sub>1</sub> <span class="mono neon">held constant</span> at boundary-optimized value</li>
+                    <li>λ<sub>2</sub> scaled <span class="mono cyan">logarithmically</span> across 12 controlled trials</li>
+                    <li>Optimal ratio determined at <span class="mono neon">FP decay inflection point</span></li>
+                    <li>Convergence achieved at <span class="mono">epoch 35</span> via early stopping (30% compute savings)</li>
+                </ul>
+                <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 15px; margin-top: 15px;">
+                    <p style="font-size: 0.6em; color: var(--text-dim); font-family: var(--font-mono);">
+                        Result: Median prediction confidence — 0.434 → 0.605 (+39.4%)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <aside class="notes">
+            The hyperparameters were not selected ad hoc. Lambda 1 was held constant while lambda 2 was scaled logarithmically across 12 trials. The optimal ratio was locked at the inflection point of the false-positive decay curve.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 8 — THE ULTIMATE QUESTION
+         ══════════════════════════════════════════════════════════ -->
+    <section class="center-question">
+        <h2 style="font-size: 2em;">Should a model optimize for<br><span class="amber">benchmark metrics</span> or <span class="neon">operational reliability</span>?</h2>
+        <div class="fragment reveal-answer">
+            <p style="font-size: 1.3em; font-weight: 600;"><span class="neon">Operational Superiority</span> over <span class="red">Metric Optimization</span></p>
+        </div>
+        <aside class="notes">
+            This is the central thesis of the work: aggregate detection metrics can be misleading when the downstream task is yield estimation. Operational reliability — fewer but confident predictions — produces more accurate business outcomes.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 9 — THE DELIBERATE TRADE-OFF (VISUAL PROOF)
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Comparative Evaluation</h2>
+        <h3 class="dim">Baseline vs. Tuned — quantitative performance analysis</h3>
+        <div class="glow-line"></div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="model_comparison_showdown.png" class="slide-image" style="max-height: 200px; width: auto;">
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Baseline (640px)</th>
+                    <th>Tuned (1024px)</th>
+                    <th>Δ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>mAP@50</td>
+                    <td>0.950</td>
+                    <td>0.944</td>
+                    <td class="red">−0.006</td>
+                </tr>
+                <tr>
+                    <td>Recall</td>
+                    <td>0.974</td>
+                    <td>0.906</td>
+                    <td class="red">−0.068</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--accent-green); font-weight: 600;">Median Confidence</td>
+                    <td>0.434</td>
+                    <td style="color: var(--accent-green); font-weight: 600;">0.605</td>
+                    <td class="neon" style="font-weight: 700;">+39.4%</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--accent-green); font-weight: 600;">Zero-IoU FP Count</td>
+                    <td class="red">1,092</td>
+                    <td class="neon">0</td>
+                    <td class="neon" style="font-weight: 700;">ELIMINATED</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <aside class="notes">
+            The tuned model trades 6.8 percentage points of marginal recall for a 39.4 percent increase in median prediction confidence and complete elimination of zero-IoU false positives. In the context of yield estimation, this trade-off directly reduces downstream prediction error by 4 to 8 percent.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 10 — THE PRODUCTION ENGINE
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Production Deployment</h2>
+        <h3 class="dim">End-to-end inference pipeline — Hugging Face Spaces</h3>
+        <div class="glow-line"></div>
+
+        <div style="display: flex; gap: 30px; align-items: flex-start;">
+            <div style="flex: 1;">
+                <img src="teaser_statistic.png" class="slide-image" style="max-height: 250px; width: 100%; object-fit: contain; margin-bottom: 10px;">
+                <img src="teaser_wheat_only.png" class="slide-image" style="max-height: 420px; width: 100%; object-fit: contain;">
+            </div>
+            <div style="flex: 0.9;">
+                <div style="font-family: var(--font-mono); font-size: 0.55em; color: var(--text-secondary); line-height: 1.8;">
+                    <p><span class="neon">01</span> &nbsp;High-resolution drone imagery ingestion</p>
+                    <p><span class="neon">02</span> &nbsp;Tuned YOLOv8s inference at 1024px</p>
+                    <p><span class="neon">03</span> &nbsp;Non-Maximum Suppression (conf + IoU)</p>
+                    <p><span class="neon">04</span> &nbsp;Agronomic analytics computation</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Yield estimation (t/ha)</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Spatial uniformity (CV%)</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Revenue projection</p>
+                    <p><span class="neon">05</span> &nbsp;Automated PDF executive report</p>
+                </div>
+                <div style="margin-top: 15px; padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px;">
+                    <p class="mono" style="font-size: 0.55em; color: var(--accent-cyan);">
+                        Live: huggingface.co/spaces/gdlyanvahe/AgriVision-Engine
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <aside class="notes">
+            The complete inference pipeline is deployed as a stateless Streamlit application on Hugging Face Spaces, enabling real-time drone image analysis with automated yield estimation and PDF report generation.
+        </aside>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SLIDE 11 — LIMITATIONS & NEXT STEPS
+         ══════════════════════════════════════════════════════════ -->
+    <section>
+        <h2>Known Limitations &amp; Future Work</h2>
+        <div class="glow-line"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <p style="font-size: 0.7em; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 15px;">Identified Limitations</p>
+                <div class="roadmap-item">
+                    <div class="roadmap-icon" style="font-size: 1em; color: var(--accent-red);">■</div>
+                    <div>
+                        <p class="roadmap-label">Motion Blur Sensitivity</p>
+                        <p class="roadmap-desc">High-velocity UAV traversal introduces edge deformation that degrades bounding box localization precision.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-icon" style="font-size: 1em; color: var(--accent-amber);">■</div>
+                    <div>
+                        <p class="roadmap-label">Domain Constraint</p>
+                        <p class="roadmap-desc">Network weights specialized for wheat canopy phenotypic topology. Transfer to alternative crop species requires supervised retraining.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <p style="font-size: 0.7em; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 15px;">Proposed Extensions</p>
+                <div class="roadmap-item" style="border-left: 2px solid var(--accent-green);">
+                    <div>
+                        <p class="roadmap-label">Temporal Consistency Module</p>
+                        <p class="roadmap-desc">Inter-frame smoothing to absorb motion artifacts across sequential captures.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item" style="border-left: 2px solid var(--accent-green);">
+                    <div>
+                        <p class="roadmap-label">Multi-Spectral Data Fusion</p>
+                        <p class="roadmap-desc">Integration of NDVI spectral indices for direct chlorophyll density correlation.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item" style="border-left: 2px solid var(--accent-green);">
+                    <div>
+                        <p class="roadmap-label">REST API Microservice</p>
+                        <p class="roadmap-desc">FastAPI-based inference decoupling for IoT and third-party application integration.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="terminal-prompt" style="text-align: center;">Thank you. We will now take questions.</p>
+
+        <aside class="notes">
+            The system is optimized for stationary photometric variance conditions. Severe motion blur from high-velocity camera rigs remains the primary failure mode, which informs the architectural direction for the next iteration.
+        </aside>
+    </section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<!-- Reveal.js CDN Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+    Reveal.initialize({
+        hash: true,
+        slideNumber: 'c/t',
+        showSlideNumber: 'all',
+        transition: 'fade',
+        transitionSpeed: 'slow',
+        backgroundTransition: 'fade',
+        center: false,
+        width: 1920,
+        height: 1080,
+        margin: 0.04,
+        minScale: 0.2,
+        maxScale: 2.0,
+        plugins: [ RevealNotes ],
+        keyboard: {
+            83: function() { Reveal.getPlugin('notes').open(); }
+        }
+    });
+</script>
+</body>
+</html>
